@@ -11,14 +11,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-10 rounded-lg" >
-      <h1 className="text-4xl font-extrabold mb-8 text-gray-900">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 px-4 py-10 rounded-lg text-white">
+      <h1 className="text-4xl font-extrabold mb-8 text-white">
         Next.js Quotes App
       </h1>
 
       <button
         onClick={handleQuotes}
-        className="mb-8 px-6 py-3 bg-black text-white rounded-lg shadow-md hover:bg-gray-800 transition cursor-pointer"
+        className="mb-8 px-6 py-3 bg-white text-black rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer"
       >
         Get 10 Random Quotes
       </button>
@@ -28,16 +28,16 @@ export default function Home() {
           quotes.map((quote) => (
             <div
               key={quote.id}
-              className="bg-white border border-gray-200 rounded-xl p-6 transition shadow-sm hover:translate-px"
+              className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:scale-[1.01] transition"
             >
-              <p className="text-lg text-gray-800 italic">“{quote.text}”</p>
-              <p className="mt-4 text-right text-gray-600 font-medium">
+              <p className="text-lg text-gray-200 italic">“{quote.text}”</p>
+              <p className="mt-4 text-right text-gray-400 font-medium">
                 — {quote.author}
               </p>
             </div>
           ))
         ) : (
-          <h2 className="text-xl text-gray-500 text-center">
+          <h2 className="text-xl text-gray-400 text-center">
             Quotes gonna be here.
           </h2>
         )}
