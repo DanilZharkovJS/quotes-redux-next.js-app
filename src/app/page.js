@@ -1,6 +1,8 @@
 'use client'
 import { fetchQuotes, selectQuotes } from '@/redux/slices/quotesSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import Button from '@/components/Button'
+import CardOne from '@/components/CardOne'
 
 export default function Home() {
   const dispatch = useDispatch()
@@ -16,25 +18,17 @@ export default function Home() {
         Next.js Quotes App
       </h1>
 
-      <button
+      <Button
         onClick={handleQuotes}
-        className="mb-8 px-6 py-3 bg-white text-black rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer"
+        className={"mb-8 px-6 py-3 bg-white text-black rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer"}
       >
         Get 10 Random Quotes
-      </button>
+      </Button>
 
       <div className="w-full max-w-2xl space-y-6">
         {quotes.length ? (
           quotes.map((quote) => (
-            <div
-              key={quote.id}
-              className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:scale-[1.01] transition"
-            >
-              <p className="text-lg text-gray-200 italic">“{quote.text}”</p>
-              <p className="mt-4 text-right text-gray-400 font-medium">
-                — {quote.author}
-              </p>
-            </div>
+           <CardOne key={quote.id} quote={quote}/>
           ))
         ) : (
           <h2 className="text-xl text-gray-400 text-center">
