@@ -12,11 +12,13 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4 shadow-md flex flex-col items-center md:flex-row md:items-center md:justify-start relative">
-      <h1 className="text-2xl font-bold mb-4 md:mb-0 md:text-left md:flex-shrink-0">
-        <Link href={'/'}>Quotes Next.JS App</Link>
-      </h1>
-      <div className="w-full md:w-auto md:ml-10 ml-0">
+    <nav className="bg-gray-800 text-white px-6 py-4 shadow-md flex flex-col items-center md:flex-row md:items-center md:justify-start relative">
+      <Link href={'/'}>
+        <h1 className="text-2xl font-bold mb-4 md:mb-0 md:text-left md:flex-shrink-0">
+          Quotes Next.JS App
+        </h1>
+      </Link>
+      <div className="w-full md:w-auto md:ml-20 ml-0">
         <ul className="flex gap-10 justify-center">
           {links.map((link) => (
             <li key={link.href}>
