@@ -25,14 +25,27 @@ export default function Search() {
 
   const [authorError, setAuthorError] = useState(null)
   const [textError, setTextError] = useState(null)
+  const [authorTouched, setAuthorTouched] = useState(false)
+  const [textTouched, setTextTouched] = useState(false)
+
+  const validateAuthor = (value) => {
+    return value.trim().length >= 3 || value.trim().length === 0
+      ? null
+      : 'Author must be at least 3 characters'
+  }
+
+  const validateText = (value) => {
+    return value.trim().length >= 3 || value.trim().length === 0
+      ? null
+      : 'Text must be at least 3 characters'
+  }
 
   const handleSearch = () => {
-    const validAuthor =
-      searchAuthor.trim().length >= 3 || searchAuthor.trim().length === 0
-    const validText =
-      searchText.trim().length >= 3 || searchText.trim().length === 0
-    setAuthorError(validAuthor ? null : 'Author must be at least 3 characters')
-    setTextError(validText ? null : 'Text must be at least 3 characters')
+    setAuthorTouched(true)
+    setTextTouched(true)
+    const validAuthor = !validateAuthor(searchAuthor)
+    const validText = !validateText(searchText)
+
     if (!validAuthor || !validText) return
     dispatch(
       fetchQuotesByAuthorAndText({ author: searchAuthor, text: searchText })
@@ -50,10 +63,15 @@ export default function Search() {
             placeholder="Author"
             value={searchAuthor}
             className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            onChange={(e) => dispatch(setSearchAuthor(e.target.value))}
+            onChange={(e) => {
+              const value = e.target.value
+              dispatch(setSearchAuthor(value))
+              setAuthorError(validateAuthor(value))
+            }}
+            onBlur={() => setAuthorTouched(true)}
           />
-          {authorError && (
-            <p className="text-red-500 text-sm mt-1">{authorError}</p>
+          {authorTouched && authorError && (
+            <p className="text-red-500 font-bold text-sm m-2">{authorError}</p>
           )}
         </div>
 
@@ -63,10 +81,15 @@ export default function Search() {
             placeholder="Text"
             value={searchText}
             className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            onChange={(e) => dispatch(setSearchText(e.target.value))}
+            onChange={(e) => {
+              const value = e.target.value
+              dispatch(setSearchText(value))
+              setTextError(validateText(value))
+            }}
+            onBlur={() => setTextTouched(true)}
           />
-          {textError && (
-            <p className="text-red-500 text-sm mt-1">{textError}</p>
+          {textTouched && textError && (
+            <p className="text-red-500 font-bold text-sm m-2">{textError}</p>
           )}
         </div>
 
