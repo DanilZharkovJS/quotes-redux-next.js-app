@@ -1,29 +1,34 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit')
 
-// thunk для поиска цитат с параметрами author и text
-export const fetchQuotesByAuthorAndText = createAsyncThunk(
-  'search/fetchByAuthorAndText',
+const initialState = {
+  quotes: [],
+  searchAuthor: '',
+  searchText: '',
+  status: 'idle',
+  error: {
+    searchError: null,
+  },
+}
+
+const fetchQuotesByAuthorAndText = createAsyncThunk(
+  'quotes/fetchByAuthorAndText',
   async ({ author, text }) => {
     const params = new URLSearchParams()
     if (author) params.append('author', author)
     if (text) params.append('text', text)
-    const url = `http://localhost:3000/quotes?${params.toString()}`
 
-    const res = await fetch(url)
-    if (!res.ok) throw new Error('Ошибка загрузки')
-    return res.json()
+    const res = await fetch(`http://localhost:3000/quotes?${params.toString()}`)
+    if (!res.ok) {
+      throw new Error('Failed to fetch quotes')
+    }
+    const data = await res.json()
+    return data
   }
 )
 
 const searchSlice = createSlice({
   name: 'search',
-  initialState: {
-    quotes: [],
-    status: 'idle',
-    error: null,
-    searchAuthor: '',
-    searchText: '',
-  },
+  initialState,
   reducers: {
     setSearchAuthor(state, action) {
       state.searchAuthor = action.payload
@@ -31,7 +36,7 @@ const searchSlice = createSlice({
     setSearchText(state, action) {
       state.searchText = action.payload
     },
-    clearInputs(state) {
+    clearSearch(state) {
       state.searchAuthor = ''
       state.searchText = ''
     },
@@ -40,27 +45,29 @@ const searchSlice = createSlice({
     builder
       .addCase(fetchQuotesByAuthorAndText.pending, (state) => {
         state.status = 'loading'
-        state.error = null
+        state.error.searchError = null
       })
       .addCase(fetchQuotesByAuthorAndText.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.quotes = Array.isArray(action.payload)
-          ? action.payload
-          : [action.payload]
+        state.quotes = action.payload
       })
       .addCase(fetchQuotesByAuthorAndText.rejected, (state, action) => {
         state.status = 'failed'
-        state.error = action.error.message
+        state.error.searchError = action.error.message
       })
   },
 })
 
-export const { setSearchAuthor, setSearchText, clearInputs } =
+export const { setSearchAuthor, setSearchText, clearSearch } =
   searchSlice.actions
-export default searchSlice.reducer
+
+export { fetchQuotesByAuthorAndText }
 
 export const selectQuotes = (state) => state.search.quotes
-export const selectStatus = (state) => state.search.status
-export const selectError = (state) => state.search.error
 export const selectSearchAuthor = (state) => state.search.searchAuthor
 export const selectSearchText = (state) => state.search.searchText
+export const selectStatus = (state) => state.search.status
+export const selectSearchError = (state) => state.search.error.searchError
+export const selectInputTextError = (state) => state.search.error.inputTextError
+
+export default searchSlice.reducer

@@ -3,26 +3,35 @@
 import { useDispatch, useSelector } from 'react-redux'
 import {
   selectQuotes,
-  selectStatus,
-  selectError,
   selectSearchAuthor,
   selectSearchText,
+  selectStatus,
+  selectSearchError,
   setSearchAuthor,
   setSearchText,
+  clearSearch,
   fetchQuotesByAuthorAndText,
-  clearInputs,
 } from '@/redux/slices/searchSlice'
 import CardOne from '@/components/CardOne'
+import { useState } from 'react'
 
 export default function Search() {
   const dispatch = useDispatch()
   const quotes = useSelector(selectQuotes)
-  const status = useSelector(selectStatus)
-  const error = useSelector(selectError)
   const searchAuthor = useSelector(selectSearchAuthor)
   const searchText = useSelector(selectSearchText)
+  const status = useSelector(selectStatus)
+  const error = useSelector(selectSearchError)
+
+  const [authorError, setAuthorError] = useState(null)
+  const [textError, setTextError] = useState(null)
 
   const handleSearch = () => {
+    const validAuthor = searchAuthor.trim().length >= 3
+    const validText = searchText.trim().length >= 3
+    setAuthorError(validAuthor ? null : 'Author must be at least 3 characters')
+    setTextError(validText ? null : 'Text must be at least 3 characters')
+    if (!validAuthor || !validText) return
     dispatch(
       fetchQuotesByAuthorAndText({ author: searchAuthor, text: searchText })
     )
@@ -32,55 +41,70 @@ export default function Search() {
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 px-6 py-10 text-white">
       <h1 className="text-4xl font-extrabold mb-8">Search Quotes</h1>
 
-      <div className="flex flex-col gap-4 mb-8 w-full max-w-3xl">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-grow flex flex-col">
           <input
             type="text"
             placeholder="Author"
             value={searchAuthor}
+            className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             onChange={(e) => dispatch(setSearchAuthor(e.target.value))}
-            className="flex-grow p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
           />
+          {authorError && (
+            <p className="text-red-500 text-sm mt-1">{authorError}</p>
+          )}
+        </div>
+
+        <div className="flex-grow flex flex-col">
           <input
             type="text"
             placeholder="Text"
             value={searchText}
+            className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             onChange={(e) => dispatch(setSearchText(e.target.value))}
-            className="flex-grow p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
           />
-          <button
-            onClick={handleSearch}
-            className="bg-yellow-400 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer"
-          >
-            Search
-          </button>
+          {textError && (
+            <p className="text-red-500 text-sm mt-1">{textError}</p>
+          )}
         </div>
 
         <button
-          onClick={() => dispatch(clearInputs())}
-          className="self-center mt-2 text-white bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded transition cursor-pointer"
+          className="bg-yellow-400 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer self-start"
+          onClick={handleSearch}
         >
-          Clear search fields
+          Search
+        </button>
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded transition cursor-pointer"
+          onClick={() => dispatch(clearSearch())}
+        >
+          Clear Search Fields
         </button>
       </div>
 
-      {status === 'loading' && (
-        <p className="text-yellow-400 text-lg mb-6">Loading...</p>
-      )}
-      {status === 'failed' && (
-        <p className="text-red-500 text-lg mb-6">Error: {error}</p>
-      )}
-      {quotes.length === 0 && status === 'succeeded' && (
-        <p className="text-gray-400 text-lg">No quotes found.</p>
-      )}
+      <div className="m-7 flex ">
+        {status === 'loading' && (
+          <p className="text-yellow-400 text-lg mb-6">Loading...</p>
+        )}
+        {status === 'failed' && (
+          <p className="text-red-500 text-lg mb-6">Error: {error}</p>
+        )}
 
-      <ul className="w-full max-w-2xl space-y-6">
-        {quotes.map((quote) => (
-          <li key={quote.id}>
-            <CardOne quote={quote} />
-          </li>
-        ))}
-      </ul>
+        {status === 'succeeded' && quotes.length === 0 && (
+          <p className="text-gray-400 text-lg">No quotes found.</p>
+        )}
+        {quotes.length > 0 && (
+          <ul className="w-full max-w-2xl space-y-6">
+            {quotes.map((quote) => (
+              <li key={quote.id}>
+                <CardOne quote={quote} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
