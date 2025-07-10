@@ -27,8 +27,10 @@ export default function Search() {
   const [textError, setTextError] = useState(null)
 
   const handleSearch = () => {
-    const validAuthor = searchAuthor.trim().length >= 3
-    const validText = searchText.trim().length >= 3
+    const validAuthor =
+      searchAuthor.trim().length >= 3 || searchAuthor.trim().length === 0
+    const validText =
+      searchText.trim().length >= 3 || searchText.trim().length === 0
     setAuthorError(validAuthor ? null : 'Author must be at least 3 characters')
     setTextError(validText ? null : 'Text must be at least 3 characters')
     if (!validAuthor || !validText) return
@@ -69,32 +71,33 @@ export default function Search() {
         </div>
 
         <button
-          className="bg-yellow-400 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer self-start"
+          className="bg-yellow-400 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer self-center sm:mb-5.5  "
           onClick={handleSearch}
         >
           Search
         </button>
       </div>
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center">
         <button
-          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded transition cursor-pointer"
+          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 mt-3 sm:m-0 rounded transition cursor-pointer"
           onClick={() => dispatch(clearSearch())}
         >
           Clear Search Fields
         </button>
       </div>
+      <div className="block">
+        <div className="m-5 flex justify-center">
+          {status === 'loading' && (
+            <p className="text-yellow-400 text-lg mb-6">Loading...</p>
+          )}
+          {status === 'failed' && (
+            <p className="text-red-500 text-lg mb-6">Error: {error}</p>
+          )}
 
-      <div className="m-7 flex ">
-        {status === 'loading' && (
-          <p className="text-yellow-400 text-lg mb-6">Loading...</p>
-        )}
-        {status === 'failed' && (
-          <p className="text-red-500 text-lg mb-6">Error: {error}</p>
-        )}
-
-        {status === 'succeeded' && quotes.length === 0 && (
-          <p className="text-gray-400 text-lg">No quotes found.</p>
-        )}
+          {status === 'succeeded' && quotes.length === 0 && (
+            <p className="text-gray-400 text-lg">No quotes found.</p>
+          )}
+        </div>
         {quotes.length > 0 && (
           <ul className="w-full max-w-2xl space-y-6">
             {quotes.map((quote) => (
