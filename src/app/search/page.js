@@ -1,6 +1,8 @@
 'use client'
 
 import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
+import { Message } from 'primereact/message'
 import {
   selectQuotes,
   selectSearchAuthor,
@@ -13,7 +15,7 @@ import {
   fetchQuotesByAuthorAndText,
 } from '@/redux/slices/searchSlice'
 import CardOne from '@/components/CardOne'
-import { useState } from 'react'
+import { ErrorMessageStyle } from '../styles/ErrorMessageStyle'
 
 export default function Search() {
   const dispatch = useDispatch()
@@ -114,7 +116,7 @@ export default function Search() {
             <p className="text-yellow-400 text-lg mb-6">Loading...</p>
           )}
           {status === 'failed' && (
-            <p className="text-red-500 text-lg mb-6">Error: {error}</p>
+            <Message severity="error" text={error} style={ErrorMessageStyle}/>
           )}
 
           {status === 'succeeded' && quotes.length === 0 && (
