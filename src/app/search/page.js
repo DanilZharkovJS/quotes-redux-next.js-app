@@ -15,6 +15,8 @@ import {
   fetchQuotesByAuthorAndText,
 } from '@/redux/slices/searchSlice'
 import CardOne from '@/components/CardOne'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 import { ErrorMessageStyle } from '../styles/ErrorMessageStyle'
 
 export default function Search() {
@@ -116,7 +118,16 @@ export default function Search() {
             <p className="text-yellow-400 text-lg mb-6">Loading...</p>
           )}
           {status === 'failed' && (
-            <Message severity="error" text={error} style={ErrorMessageStyle}/>
+            <div>
+              <Alert
+                variant="filled"
+                severity="error"
+                sx={ErrorMessageStyle}
+              >
+                <AlertTitle sx={{fontWeight: '900'}}>Error</AlertTitle>
+                {error}
+              </Alert>
+            </div>
           )}
 
           {status === 'succeeded' && quotes.length === 0 && (
