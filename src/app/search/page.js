@@ -20,6 +20,7 @@ import CardOne from '@/components/CardOne'
 import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import { ErrorMessageStyle } from '../styles/ErrorMessageStyle'
+import CircularProgress from '@mui/material/CircularProgress'
 
 export default function Search() {
   const dispatch = useDispatch()
@@ -98,7 +99,7 @@ export default function Search() {
             type="number"
             placeholder="Limit (1-49)"
             value={searchLimit}
-            className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="p-3 rounded border  border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             onChange={(e) => {
               const value = e.target.value
               dispatch(setSearchLimit(value))
@@ -147,7 +148,10 @@ export default function Search() {
       <div className="block">
         <div className="m-5 flex justify-center">
           {status === 'loading' && (
-            <p className="text-yellow-400 text-lg mb-6">Loading...</p>
+            <div className='flex items-center gap-3'>
+              <p className="text-yellow-400 text-lg">Loading</p>
+              <CircularProgress color='inherit' size={20}/>
+            </div>
           )}
           {status === 'failed' && (
             <div>
