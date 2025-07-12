@@ -75,6 +75,5 @@ export const selectSearchText = (state) => state.search.searchText
 export const selectSearchLimit = (state) => state.search.searchLimit
 export const selectStatus = (state) => state.search.status
 export const selectSearchError = (state) => state.search.error.searchError
-export const selectInputTextError = (state) => state.search.error.inputTextError
 
 export default searchSlice.reducer
