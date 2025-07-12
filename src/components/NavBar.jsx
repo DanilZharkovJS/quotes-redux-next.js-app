@@ -2,14 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { FaSearch } from 'react-icons/fa'
+import { FaRandom } from 'react-icons/fa'
+import { GrTest } from 'react-icons/gr'
 
 export default function Navbar() {
   const pathname = usePathname()
 
   const links = [
-    { href: '/', label: 'Random' },
-    { href: '/search', label: 'Search' },
-    { href: '/test', label: 'Test' },
+    { href: '/', icon: <FaRandom />, label: 'Random' },
+    { href: '/search', icon: <FaSearch />, label: 'Search' },
+    { href: '/test', icon: <GrTest />, label: 'Test' },
   ]
 
   return (
@@ -25,13 +28,17 @@ export default function Navbar() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`relative px-3 py-1 transition-colors duration-200 hover:text-yellow-400 ${
+                className={`relative inline-block px-3 py-1 transition-colors duration-200 hover:text-yellow-400 ${
                   pathname === link.href ? 'text-yellow-400 font-semibold' : ''
                 }`}
               >
-                {link.label}
+                <div className="flex items-center gap-2">
+                  {link.icon}
+                  {link.label}
+                </div>
+
                 {pathname === link.href && (
-                  <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-yellow-400 rounded"></span>
+                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-yellow-400 rounded"></span>
                 )}
               </Link>
             </li>

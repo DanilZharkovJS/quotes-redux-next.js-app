@@ -2,6 +2,7 @@
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
+import { RiDeleteBin2Line } from 'react-icons/ri'
 import {
   selectSearchAuthor,
   selectSearchText,
@@ -83,10 +84,25 @@ export default function InputFields() {
   }
 
   return (
-    <>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSearch()
+      }}
+      className="w-full flex flex-col"
+    >
+      <div className="w-full md:w-[30%] mb-2">
+        <button
+          type="button"
+          onClick={handleClear}
+          className="flex items-center gap-1 text-gray-400 hover:text-red-500 active:text-red-500 transition cursor-pointer"
+        >
+          <RiDeleteBin2Line className="w-[24px] h-[24px]" />
+          <span className="font-medium mt-1">Clear</span>
+        </button>
+      </div>
       <div className="flex flex-row flex-wrap md:flex-row gap-4 sm:justify-center">
-        {/* Author */}
-        <div className="flex-grow flex flex-col w-full sm:w-3/4 md:w-auto">
+        <div className="flex-grow flex flex-col w-full sm:w-3/4 md:w-1/5">
           <input
             type="text"
             placeholder="Author"
@@ -105,7 +121,7 @@ export default function InputFields() {
         </div>
 
         {/* Text */}
-        <div className="flex-grow flex flex-col w-full sm:w-3/4 md:w-auto">
+        <div className="flex-grow flex flex-col w-full sm:w-3/4 md:w-1/3 sm:text-center">
           <input
             type="text"
             placeholder="Text"
@@ -122,14 +138,12 @@ export default function InputFields() {
             <p className="text-red-500 font-bold text-sm m-2">{textError}</p>
           )}
         </div>
-
-        {/* Limit */}
-        <div className="flex-grow flex flex-col w-full sm:w-1/3 md:w-auto">
+        <div className="flex-grow flex flex-col w-full sm:w-1/10">
           <input
             type="number"
             placeholder="Limit of quotes"
             value={searchLimit}
-            className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="p-3 rounded text-center border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             onChange={(e) => {
               const value = e.target.value
               dispatch(setSearchLimit(value))
@@ -140,25 +154,17 @@ export default function InputFields() {
           {limitTouched && limitError && (
             <p className="text-red-500 font-bold text-sm m-2">{limitError}</p>
           )}
+          {!limitTouched && !limitError && (
+            <p className="font-bold ml-1">Limit</p>
+          )}
         </div>
-
-        {/* Buttons */}
         <button
+          type="submit"
           className="bg-yellow-400 w-full sm:w-1/6 md:w-auto text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer self-center sm:mb-5.5"
-          onClick={handleSearch}
         >
           Search
         </button>
       </div>
-
-      <div className="flex justify-center">
-        <button
-          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 mt-3 sm:m-0 rounded transition cursor-pointer"
-          onClick={handleClear}
-        >
-          Clear Search
-        </button>
-      </div>
-    </>
+    </form>
   )
 }
