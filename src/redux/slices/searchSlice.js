@@ -4,6 +4,7 @@ const initialState = {
   quotes: [],
   searchAuthor: '',
   searchText: '',
+  searchLimit: 10,
   status: 'idle',
   error: {
     searchError: null,
@@ -12,10 +13,11 @@ const initialState = {
 
 const fetchQuotesByAuthorAndText = createAsyncThunk(
   'quotes/fetchByAuthorAndText',
-  async ({ author, text }) => {
+  async ({ author, text, limit }) => {
     const params = new URLSearchParams()
     if (author) params.append('author', author)
     if (text) params.append('text', text)
+    if (limit) params.append('limit', limit)
 
     const res = await fetch(`http://localhost:3000/quotes?${params.toString()}`)
     if (!res.ok) {
@@ -36,9 +38,13 @@ const searchSlice = createSlice({
     setSearchText(state, action) {
       state.searchText = action.payload
     },
+    setSearchLimit(state, action) {
+      state.searchLimit = action.payload
+    },
     clearSearch(state) {
       state.searchAuthor = ''
       state.searchText = ''
+      state.searchLimit = 10
     },
   },
   extraReducers: (builder) => {
@@ -58,7 +64,7 @@ const searchSlice = createSlice({
   },
 })
 
-export const { setSearchAuthor, setSearchText, clearSearch } =
+export const { setSearchAuthor, setSearchText, setSearchLimit, clearSearch } =
   searchSlice.actions
 
 export { fetchQuotesByAuthorAndText }
@@ -66,6 +72,7 @@ export { fetchQuotesByAuthorAndText }
 export const selectQuotes = (state) => state.search.quotes
 export const selectSearchAuthor = (state) => state.search.searchAuthor
 export const selectSearchText = (state) => state.search.searchText
+export const selectSearchLimit = (state) => state.search.searchLimit
 export const selectStatus = (state) => state.search.status
 export const selectSearchError = (state) => state.search.error.searchError
 export const selectInputTextError = (state) => state.search.error.inputTextError

@@ -7,10 +7,12 @@ import {
   selectQuotes,
   selectSearchAuthor,
   selectSearchText,
+  selectSearchLimit,
   selectStatus,
   selectSearchError,
   setSearchAuthor,
   setSearchText,
+  setSearchLimit,
   clearSearch,
   fetchQuotesByAuthorAndText,
 } from '@/redux/slices/searchSlice'
@@ -24,12 +26,15 @@ export default function Search() {
   const quotes = useSelector(selectQuotes)
   const searchAuthor = useSelector(selectSearchAuthor)
   const searchText = useSelector(selectSearchText)
+  const searchLimit = useSelector(selectSearchLimit)
   const status = useSelector(selectStatus)
   const error = useSelector(selectSearchError)
 
   const [authorError, setAuthorError] = useState(null)
   const [textError, setTextError] = useState(null)
+  const [limitError, setLimitError] = useState(null)
   const [authorTouched, setAuthorTouched] = useState(false)
+  const [limitTouched, setLimitTouched] = useState(false)
   const [textTouched, setTextTouched] = useState(false)
 
   const validateAuthor = (value) => {
@@ -43,16 +48,26 @@ export default function Search() {
       ? null
       : 'Text must be at least 3 characters'
   }
+  const validateLimit = (value) => {
+    const num = Number(value)
+    return num >= 1 && num <= 50 ? null : 'Min. 1 | Max. 50'
+  }
 
   const handleSearch = () => {
+    setLimitTouched(true)
     setAuthorTouched(true)
     setTextTouched(true)
-    const validAuthor = !validateAuthor(searchAuthor)
-    const validText = !validateText(searchText)
+    const notValidAuthor = validateAuthor(searchAuthor)
+    const notValidText = validateText(searchText)
+    const notValidLimit = validateLimit(searchLimit)
 
-    if (!validAuthor || !validText) return
+    if (notValidAuthor || notValidText || notValidLimit) return
     dispatch(
-      fetchQuotesByAuthorAndText({ author: searchAuthor, text: searchText })
+      fetchQuotesByAuthorAndText({
+        author: searchAuthor,
+        text: searchText,
+        limit: searchLimit,
+      })
     )
   }
 
@@ -76,6 +91,23 @@ export default function Search() {
           />
           {authorTouched && authorError && (
             <p className="text-red-500 font-bold text-sm m-2">{authorError}</p>
+          )}
+        </div>
+        <div className="flex-grow flex flex-col">
+          <input
+            type="number"
+            placeholder="Limit (1-49)"
+            value={searchLimit}
+            className="p-3 rounded border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            onChange={(e) => {
+              const value = e.target.value
+              dispatch(setSearchLimit(value))
+              setLimitError(validateLimit(value))
+            }}
+            onBlur={() => setLimitTouched(true)}
+          />
+          {limitTouched && limitError && (
+            <p className="text-red-500 font-bold text-sm m-2">{limitError}</p>
           )}
         </div>
 
@@ -119,12 +151,8 @@ export default function Search() {
           )}
           {status === 'failed' && (
             <div>
-              <Alert
-                variant="filled"
-                severity="error"
-                sx={ErrorMessageStyle}
-              >
-                <AlertTitle sx={{fontWeight: '900'}}>Error</AlertTitle>
+              <Alert variant="filled" severity="error" sx={ErrorMessageStyle}>
+                <AlertTitle sx={{ fontWeight: '900' }}>Error</AlertTitle>
                 {error}
               </Alert>
             </div>
