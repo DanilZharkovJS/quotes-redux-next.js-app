@@ -4,17 +4,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import Button from '@/components/Button'
 import CardOne from '@/components/CardOne'
 import { useEffect } from 'react'
+import { useInitialsQuotes } from '@/hooks/useInitialQuotes'
 
 export default function Home() {
   const dispatch = useDispatch()
   const quotes = useSelector(selectQuotes)
 
-  const handleQuotes = () => {
-    dispatch(fetchQuotes())
-  }
-  useEffect(() => {
-    dispatch(fetchQuotes())
-  }, [])
+  useInitialsQuotes()
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 px-4 py-10 rounded-lg text-white">
@@ -23,7 +19,7 @@ export default function Home() {
       </h1>
 
       <Button
-        onClick={handleQuotes}
+        onClick={() => dispatch(fetchQuotes())}
         className={
           'mb-8 px-6 py-3 bg-white text-black rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer'
         }
