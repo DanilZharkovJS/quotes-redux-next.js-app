@@ -1,16 +1,17 @@
 'use client'
 
 import { useSelector } from 'react-redux'
+import Link from 'next/link'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import CircularProgress from '@mui/material/CircularProgress'
+import { ErrorMessageStyle } from '../../styles/ErrorMessageStyle'
 import {
   selectQuotes,
   selectStatus,
   selectSearchError,
 } from '@/redux/slices/searchSlice'
 import CardOne from '@/components/CardOne'
-import Alert from '@mui/material/Alert'
-import AlertTitle from '@mui/material/AlertTitle'
-import CircularProgress from '@mui/material/CircularProgress'
-import { ErrorMessageStyle } from '../../styles/ErrorMessageStyle'
 
 export default function QuotesList() {
   const quotes = useSelector(selectQuotes)
@@ -43,7 +44,9 @@ export default function QuotesList() {
         <ul className="w-full max-w-2xl space-y-6">
           {quotes.map((quote) => (
             <li key={quote.id}>
-              <CardOne quote={quote} />
+              <Link href={`/quotes/${quote.id}`} className="block">
+                <CardOne quote={quote} />
+              </Link>
             </li>
           ))}
         </ul>
