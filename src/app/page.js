@@ -5,6 +5,7 @@ import Button from '@/components/Button'
 import CardOne from '@/components/CardOne'
 import { useEffect } from 'react'
 import { useInitialsQuotes } from '@/hooks/useInitialQuotes'
+import Link from 'next/link'
 
 export default function Home() {
   const dispatch = useDispatch()
@@ -29,7 +30,11 @@ export default function Home() {
 
       <div className="w-full max-w-2xl space-y-6">
         {quotes.length ? (
-          quotes.map((quote) => <CardOne key={quote.id} quote={quote} />)
+          quotes.map((quote) => (
+            <Link key={quote.id} href={`/quotes/${quote.id}`} className="block">
+              <CardOne quote={quote}  />
+            </Link>
+          ))
         ) : (
           <h2 className="text-xl text-gray-400 text-center">
             Quotes gonna be here.

@@ -15,7 +15,7 @@ function SinglePage() {
   const status = useSelector(selectSingleQuoteStatus)
   const error = useSelector(selectSingleQuoteError)
 
-
+  useSingleQuote()
 
   if (status === 'loading') {
     return (
