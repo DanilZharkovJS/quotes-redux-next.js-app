@@ -1,16 +1,20 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useSingleQuote } from '@/hooks/useSingleQuote'
 import {
+  clearSingleQuote,
+  fetchQuoteById,
   selectSingleQuote,
   selectSingleQuoteError,
   selectSingleQuoteStatus,
 } from '@/redux/slices/singleQuoteSlice'
+import { useSingleQuote } from '@/hooks/useSingleQuote'
 
 function SinglePage() {
+  const dispatch = useDispatch()
+  const { id } = useParams()
   const quote = useSelector(selectSingleQuote)
   const status = useSelector(selectSingleQuoteStatus)
   const error = useSelector(selectSingleQuoteError)
@@ -19,7 +23,7 @@ function SinglePage() {
 
   if (status === 'loading') {
     return (
-      <div className="flex justify-center items-center h-64 text-yellow-500 text-xl font-semibold">
+      <div className="flex justify-center items-center h-screen bg-gray-900 text-yellow-400 text-xl font-semibold">
         Loading quote...
       </div>
     )
@@ -27,7 +31,7 @@ function SinglePage() {
 
   if (status === 'failed') {
     return (
-      <div className="text-red-600 font-bold p-4 max-w-xl mx-auto">
+      <div className="text-red-600 font-bold p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
         Error: {error || 'Failed to load quote'}
       </div>
     )
@@ -35,33 +39,35 @@ function SinglePage() {
 
   if (!quote) {
     return (
-      <div className="text-gray-500 font-medium p-4 max-w-xl mx-auto">
+      <div className="text-gray-500 font-medium p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
         Quote not found.
       </div>
     )
   }
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-gray-800 text-white rounded shadow-lg">
-      <h2 className="text-3xl font-bold mb-4">
-        {quote.author || 'Unknown Author'}
-      </h2>
-      <p className="text-lg italic mb-6">"{quote.text}"</p>
-      {quote.description && (
-        <p className="text-sm text-gray-300 mb-4">{quote.description}</p>
-      )}
-      {quote.categories?.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-4">
-          {quote.categories.map((cat, idx) => (
-            <span
-              key={idx}
-              className="bg-yellow-400 text-black text-xs font-semibold px-3 py-1 rounded-full"
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
-      )}
+    <div className="bg-gray-900 min-h-screen py-10 px-4">
+      <div className="max-w-3xl mx-auto p-8 bg-gray-800 text-white rounded-xl shadow-xl">
+        <h2 className="text-4xl font-black mb-6 text-white">
+          {quote.author || 'Unknown Author'}
+        </h2>
+        <p className="text-xl italic mb-6 leading-relaxed">"{quote.text}"</p>
+        {quote.description && (
+          <p className="text-sm text-gray-300 mb-6">{quote.description}</p>
+        )}
+        {quote.categories?.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {quote.categories.map((cat, idx) => (
+              <span
+                key={idx}
+                className="bg-yellow-400 text-black text-sm font-semibold px-3 py-1 rounded-full"
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

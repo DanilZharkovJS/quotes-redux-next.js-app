@@ -31,9 +31,7 @@ export default function Home() {
       <div className="w-full max-w-2xl space-y-6">
         {quotes.length ? (
           quotes.map((quote) => (
-            <Link key={quote.id} href={`/quotes/${quote.id}`} className="block">
-              <CardOne quote={quote}  />
-            </Link>
+              <CardOne key={quote.id} quote={quote} details={true} />
           ))
         ) : (
           <h2 className="text-xl text-gray-400 text-center">

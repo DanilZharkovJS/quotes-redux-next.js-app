@@ -44,9 +44,7 @@ export default function QuotesList() {
         <ul className="w-full max-w-2xl space-y-6">
           {quotes.map((quote) => (
             <li key={quote.id}>
-              <Link href={`/quotes/${quote.id}`} className="block">
-                <CardOne quote={quote} />
-              </Link>
+                <CardOne quote={quote} details={true}/>
             </li>
           ))}
         </ul>
