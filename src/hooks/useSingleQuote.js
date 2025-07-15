@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-
+import { useEffect, useState } from 'react'
 
 export default function useSingleQuote(id) {
   const [quote, setQuote] = useState(null)
@@ -8,15 +7,24 @@ export default function useSingleQuote(id) {
 
   useEffect(() => {
     if (!id) return
-    setLoading(true)
-    fetch(`http://localhost:3000/quotes/${id}`)
-      .then(res => {
+
+    const fetchQuote = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`http://localhost:3000/quotes/${id}`)
         if (!res.ok) throw new Error('Quote not found')
-        return res.json()
-      })
-      .then(setQuote)
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false))
+
+        const data = await res.json()
+        setQuote(data)
+        console.log(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuote()
   }, [id])
 
   return { quote, loading, error }
