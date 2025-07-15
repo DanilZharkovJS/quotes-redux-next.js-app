@@ -1,27 +1,13 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  clearSingleQuote,
-  fetchQuoteById,
-  selectSingleQuote,
-  selectSingleQuoteError,
-  selectSingleQuoteStatus,
-} from '@/redux/slices/singleQuoteSlice'
-import { useSingleQuote } from '@/hooks/useSingleQuote'
+import  useSingleQuote  from '@/hooks/useSingleQuote'
 
 function SinglePage() {
-  const dispatch = useDispatch()
   const { id } = useParams()
-  const quote = useSelector(selectSingleQuote)
-  const status = useSelector(selectSingleQuoteStatus)
-  const error = useSelector(selectSingleQuoteError)
+  const {quote, loading, error} = useSingleQuote(id)
 
-  useSingleQuote()
-
-  if (status === 'loading') {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-900 text-yellow-400 text-xl font-semibold">
         Loading quote...
@@ -29,7 +15,7 @@ function SinglePage() {
     )
   }
 
-  if (status === 'failed') {
+  if (error) {
     return (
       <div className="text-red-600 font-bold p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
         Error: {error || 'Failed to load quote'}

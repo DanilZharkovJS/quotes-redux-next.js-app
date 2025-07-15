@@ -6,5 +6,5 @@ export const useInitialsQuotes = () => {
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(fetchQuotes())
-  }, [])
+  }, [dispatch])
 }
