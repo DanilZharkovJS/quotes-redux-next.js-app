@@ -1,95 +1,98 @@
 'use client'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { FaSearch } from 'react-icons/fa'
 import { RiDeleteBin2Line } from 'react-icons/ri'
-import { createInputsConfig } from '../data/inputsConfig'
+import Input from '@/components/Input'
+
 import {
-  selectSearchAuthor,
-  selectSearchText,
-  selectSearchLimit,
   setSearchAuthor,
   setSearchText,
   setSearchLimit,
-  fetchQuotesByAuthorAndText,
   clearSearch,
+  fetchQuotesByAuthorAndText,
+  selectSearchAuthor,
+  selectSearchText,
+  selectSearchLimit,
 } from '@/redux/slices/searchSlice'
+
 import {
-  selectAuthorError,
-  selectLimitError,
-  selectTextError,
-  setTextError,
   setAuthorError,
+  setTextError,
   setLimitError,
+  selectAuthorError,
+  selectTextError,
+  selectLimitError,
 } from '@/redux/slices/validationSlice'
-import { FaSearch } from 'react-icons/fa'
 
 export default function InputFields() {
   const dispatch = useDispatch()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const searchAuthor = useSelector(selectSearchAuthor)
   const searchText = useSelector(selectSearchText)
   const searchLimit = useSelector(selectSearchLimit)
+
   const authorError = useSelector(selectAuthorError)
   const textError = useSelector(selectTextError)
   const limitError = useSelector(selectLimitError)
 
-  const [authorTouched, setAuthorTouched] = useState(false)
-  const [limitTouched, setLimitTouched] = useState(false)
-  const [textTouched, setTextTouched] = useState(false)
+  const [touched, setTouched] = useState({
+    authorTouched: false,
+    textTouched: false,
+    limitTouched: false,
+  })
 
-  const validateAuthor = (value) => {
-    return value.trim().length >= 3 || value.trim().length === 0
+  useEffect(() => {
+    const author = searchParams.get('author') || ''
+    const text = searchParams.get('text') || ''
+    const limit = searchParams.get('limit') || '10'
+    dispatch(setSearchAuthor(author))
+    dispatch(setSearchText(text))
+    dispatch(setSearchLimit(limit))
+  }, [searchParams, dispatch])
+
+  const validateAuthor = (value) =>
+    value.trim().length >= 3 || value.trim().length === 0
       ? null
       : 'Author must be at least 3 characters'
-  }
 
-  const validateText = (value) => {
-    return value.trim().length >= 3 || value.trim().length === 0
+  const validateText = (value) =>
+    value.trim().length >= 3 || value.trim().length === 0
       ? null
       : 'Text must be at least 3 characters'
-  }
 
   const validateLimit = (value) => {
     const num = Number(value)
     return num >= 1 && num <= 50 ? null : 'Min. 1 | Max. 50'
   }
 
-  const inputsConfig = createInputsConfig({
-    searchAuthor,
-    searchText,
-    searchLimit,
-    authorError,
-    textError,
-    limitError,
-    setAuthorTouched,
-    setTextTouched,
-    setLimitTouched,
-    validateAuthor,
-    validateText,
-    validateLimit,
-    dispatch,
-    setSearchAuthor,
-    setSearchText,
-    setSearchLimit,
-    setAuthorError,
-    setTextError,
-    setLimitError,
-  })
-
   const handleSearch = () => {
-    setLimitTouched(true)
-    setAuthorTouched(true)
-    setTextTouched(true)
+    setTouched({
+      authorTouched: true,
+      textTouched: true,
+      limitTouched: true,
+    })
 
-    const notValidAuthor = validateAuthor(searchAuthor)
-    const notValidText = validateText(searchText)
-    const notValidLimit = validateLimit(searchLimit)
+    const authorErr = validateAuthor(searchAuthor)
+    const textErr = validateText(searchText)
+    const limitErr = validateLimit(searchLimit)
 
-    dispatch(setAuthorError(notValidAuthor))
-    dispatch(setTextError(notValidText))
-    dispatch(setLimitError(notValidLimit))
+    dispatch(setAuthorError(authorErr))
+    dispatch(setTextError(textErr))
+    dispatch(setLimitError(limitErr))
 
-    if (notValidAuthor || notValidText || notValidLimit) return
+    if (authorErr || textErr || limitErr) return
+
+    const params = new URLSearchParams()
+    if (searchAuthor) params.set('author', searchAuthor)
+    if (searchText) params.set('text', searchText)
+    if (searchLimit) params.set('limit', searchLimit)
+
+    router.push(`/search/?${params.toString()}`)
 
     dispatch(
       fetchQuotesByAuthorAndText({
@@ -102,9 +105,11 @@ export default function InputFields() {
 
   const handleClear = () => {
     dispatch(clearSearch())
-    setAuthorTouched(false)
-    setLimitTouched(false)
-    setTextTouched(false)
+    setTouched({
+      authorTouched: false,
+      textTouched: false,
+      limitTouched: false,
+    })
   }
 
   return (
@@ -119,49 +124,71 @@ export default function InputFields() {
         <button
           type="button"
           onClick={handleClear}
-          className="flex items-center gap-1 text-gray-400 hover:text-red-500 active:text-red-500 transition cursor-pointer"
+          className="flex items-center gap-1 text-gray-400 hover:text-red-500 transition"
         >
           <RiDeleteBin2Line className="w-[24px] h-[24px]" />
           <span className="font-medium mt-1">Clear</span>
         </button>
       </div>
 
-      <div className="flex flex-row flex-wrap md:flex-row gap-4 sm:justify-center">
-        {inputsConfig.map((input) => (
-          <div
-            key={input.id}
-            className={`flex-grow flex flex-col w-full sm:w-3/4 md:w-${
-              input.id === 'limit'
-                ? '1/10'
-                : input.id === 'author'
-                ? '1/5'
-                : '1/3'
-            } ${input.id === 'text' ? 'sm:text-center' : ''}`}
-          >
-            <input
-              type={input.type || 'text'}
-              placeholder={input.placeholder}
-              value={input.value}
-              className={`p-3 rounded ${
-                input.center ? 'text-center' : ''
-              } border border-yellow-400 bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400`}
-              onChange={(e) => input.onChange(e.target.value)}
-              onBlur={() => input.setTouched(true)}
-            />
-            {input.touched && input.error && (
-              <p className="text-red-500 font-bold text-sm m-2">
-                {input.error}
-              </p>
-            )}
-            {!input.touched && !input.error && input.extraNote && (
-              <p className="font-bold ml-1">{input.extraNote}</p>
-            )}
-          </div>
-        ))}
+      <div className="flex flex-row flex-wrap gap-4 sm:justify-center">
+        <div className="w-full sm:w-1/3">
+          <Input
+            id="author"
+            value={searchAuthor}
+            onChange={(val) => {
+              dispatch(setSearchAuthor(val))
+              dispatch(setAuthorError(validateAuthor(val)))
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, authorTouched: true }))
+            }
+            touched={touched.authorTouched}
+            error={authorError}
+            placeholder="Author"
+          />
+        </div>
+
+        <div className="w-full sm:w-1/3">
+          <Input
+            id="text"
+            value={searchText}
+            onChange={(val) => {
+              dispatch(setSearchText(val))
+              dispatch(setTextError(validateText(val)))
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, textTouched: true }))
+            }
+            touched={touched.textTouched}
+            error={textError}
+            placeholder="Text"
+          />
+        </div>
+
+        <div className="w-full sm:w-1/6">
+          <Input
+            id="limit"
+            type="number"
+            value={searchLimit}
+            onChange={(val) => {
+              dispatch(setSearchLimit(val))
+              dispatch(setLimitError(validateLimit(val)))
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, limitTouched: true }))
+            }
+            touched={touched.limitTouched}
+            error={limitError}
+            placeholder="Limit"
+            center
+            extraNote="Limit"
+          />
+        </div>
 
         <button
           type="submit"
-          className="bg-yellow-400 pl-4 pr-4 w-full sm:w-1/6 md:w-auto text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition cursor-pointer self-center sm:mb-5.5"
+          className="bg-yellow-400 text-black px-6 py-3 rounded font-semibold hover:bg-yellow-500 transition self-center w-full sm:w-1/6"
         >
           <div className="flex items-center gap-1 justify-center">
             <FaSearch />

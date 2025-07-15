@@ -1,28 +1,14 @@
-'use client'
+import getSingleQuote from '@/hooks/getSingleQuote'
 
-import { useParams } from 'next/navigation'
-import  useSingleQuote  from '@/hooks/useSingleQuote'
+async function SinglePage({ params }) {
+  let quote = null
 
-function SinglePage() {
-  const { id } = useParams()
-  const {quote, loading, error} = useSingleQuote(id)
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-900 text-yellow-400 text-xl font-semibold">
-        Loading quote...
-      </div>
-    )
+  try {
+    quote = await getSingleQuote(params.id)
+  } catch {
+    quote = null
   }
-
-  if (error) {
-    return (
-      <div className="text-red-600 font-bold p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
-        Error: {error || 'Failed to load quote'}
-      </div>
-    )
-  }
-
+  console.log('quote: ', quote)
   if (!quote) {
     return (
       <div className="text-gray-500 font-medium p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
