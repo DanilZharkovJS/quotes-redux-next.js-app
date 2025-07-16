@@ -2,7 +2,6 @@ import getSingleQuote from '@/hooks/getSingleQuote'
 
 async function SinglePage({ params }) {
   let quote = null
-
   try {
     quote = await getSingleQuote(params.id)
   } catch {

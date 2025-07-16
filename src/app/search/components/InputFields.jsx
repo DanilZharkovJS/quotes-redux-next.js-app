@@ -47,13 +47,26 @@ export default function InputFields() {
   })
 
   useEffect(() => {
+    const cleanParams = new URLSearchParams()
+
     const author = searchParams.get('author') || ''
     const text = searchParams.get('text') || ''
-    const limit = searchParams.get('limit') || '10'
+    const rawLimit = searchParams.get('limit') || '10'
+
+    if (author) cleanParams.set('author', author)
+    if (text) cleanParams.set('text', text)
+    if (rawLimit) cleanParams.set('limit', rawLimit)
+
+    if (window.location.search !== `?${cleanParams.toString()}`) {
+      router.replace(`/search?${cleanParams.toString()}`)
+    }
+
     dispatch(setSearchAuthor(author))
     dispatch(setSearchText(text))
-    dispatch(setSearchLimit(limit))
-  }, [searchParams, dispatch])
+    dispatch(
+      setSearchLimit(String(Math.min(Math.max(Number(rawLimit), 1), 50)))
+    )
+  }, [searchParams])
 
   const validateAuthor = (value) =>
     value.trim().length >= 3 || value.trim().length === 0
@@ -110,6 +123,7 @@ export default function InputFields() {
       textTouched: false,
       limitTouched: false,
     })
+    router.push(`/search`)
   }
 
   return (

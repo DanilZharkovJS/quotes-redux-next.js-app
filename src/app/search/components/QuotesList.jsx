@@ -39,7 +39,7 @@ export default function QuotesList() {
           <p className="text-gray-400 text-lg">No quotes found.</p>
         )}
       </div>
-
+        
       {quotes.length > 0 && (
         <ul className="w-full max-w-2xl space-y-6">
           {quotes.map((quote) => (
