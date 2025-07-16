@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation'
 import { FaSearch } from 'react-icons/fa'
 import { FaRandom } from 'react-icons/fa'
 import { GrTest } from 'react-icons/gr'
+import { RiPlayListAddLine } from "react-icons/ri";
+
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -12,6 +14,7 @@ export default function Navbar() {
   const links = [
     { href: '/', icon: <FaRandom />, label: 'Random' },
     { href: '/search', icon: <FaSearch />, label: 'Search' },
+    { href: '/create', icon: <RiPlayListAddLine />, label: 'Create' },
     { href: '/test', icon: <GrTest />, label: 'Test' },
   ]
 
