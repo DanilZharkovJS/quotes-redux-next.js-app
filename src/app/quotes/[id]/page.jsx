@@ -1,4 +1,5 @@
 import getSingleQuote from '@/hooks/getSingleQuote'
+import Link from 'next/link'
 
 async function SinglePage({ params }) {
   let quote = null
@@ -29,12 +30,18 @@ async function SinglePage({ params }) {
         {quote.categories?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
             {quote.categories.map((cat, idx) => (
-              <span
+              <Link
                 key={idx}
-                className="bg-yellow-400 text-black text-sm font-semibold px-3 py-1 rounded-full"
+                href={`https://www.google.com/search?q=${encodeURIComponent(
+                  cat
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {cat}
-              </span>
+                <span className="bg-yellow-400 text-black text-sm font-semibold px-3 py-1 rounded-full cursor-pointer">
+                  {cat}
+                </span>
+              </Link>
             ))}
           </div>
         )}

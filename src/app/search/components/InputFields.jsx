@@ -2,7 +2,7 @@
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FaSearch } from 'react-icons/fa'
 import { RiDeleteBin2Line } from 'react-icons/ri'
 import Input from '@/components/Input'
@@ -31,6 +31,7 @@ export default function InputFields() {
   const dispatch = useDispatch()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   const searchAuthor = useSelector(selectSearchAuthor)
   const searchText = useSelector(selectSearchText)
@@ -57,16 +58,12 @@ export default function InputFields() {
     if (text) cleanParams.set('text', text)
     if (rawLimit) cleanParams.set('limit', rawLimit)
 
-    if (window.location.search !== `?${cleanParams.toString()}`) {
-      router.replace(`/search?${cleanParams.toString()}`)
-    }
-
     dispatch(setSearchAuthor(author))
     dispatch(setSearchText(text))
     dispatch(
       setSearchLimit(String(Math.min(Math.max(Number(rawLimit), 1), 50)))
     )
-  }, [searchParams])
+  }, [searchParams, pathname])
 
   const validateAuthor = (value) =>
     value.trim().length >= 3 || value.trim().length === 0

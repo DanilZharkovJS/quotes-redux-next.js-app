@@ -94,49 +94,64 @@ function CreatePage() {
   }
 
   return (
-    <div>
-      <form onSubmit={handleCreate}>
-        <Input
-          type="text"
-          placeholder="Text"
-          value={text}
-          onChange={(val) => {
-            dispatch(setText(val))
-            dispatch(setTextError(validateText(val)))
-          }}
-          onBlur={() => setTouched((prev) => ({ ...prev, textTouched: true }))}
-          touched={touched.textTouched}
-          error={textError}
-        />
-        <Input
-          type="text"
-          placeholder="Author"
-          value={author}
-          onChange={(val) => {
-            dispatch(setAuthor(val))
-            dispatch(setAuthorError(validateAuthor(val)))
-          }}
-          onBlur={() =>
-            setTouched((prev) => ({ ...prev, authorTouched: true }))
-          }
-          touched={touched.authorTouched}
-          error={authorError}
-        />
-        <Input
-          type="text"
-          placeholder="Categories, use commas "
-          value={categories}
-          onChange={(val) => {
-            handleCategoriesChange(val)
-          }}
-          onBlur={() =>
-            setTouched((prev) => ({ ...prev, categoriesTouched: true }))
-          }
-          touched={touched.categoriesTouched}
-          error={categoriesError}
-        />
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-800 rounded-lg shadow-md font-sans">
+      <form onSubmit={handleCreate} className="space-y-6">
+        <div>
+          <Input
+            type="text"
+            placeholder="Text"
+            value={text}
+            onChange={(val) => {
+              dispatch(setText(val))
+              dispatch(setTextError(validateText(val)))
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, textTouched: true }))
+            }
+            touched={touched.textTouched}
+            error={textError}
+          />
+        </div>
 
-        <Button type="submit" text={'Create'} />
+        <div>
+          <Input
+            type="text"
+            placeholder="Author"
+            value={author}
+            onChange={(val) => {
+              dispatch(setAuthor(val))
+              dispatch(setAuthorError(validateAuthor(val)))
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, authorTouched: true }))
+            }
+            touched={touched.authorTouched}
+            error={authorError}
+          />
+        </div>
+
+        <div>
+          <Input
+            type="text"
+            placeholder="Categories, use commas"
+            value={categories}
+            onChange={(val) => {
+              handleCategoriesChange(val)
+            }}
+            onBlur={() =>
+              setTouched((prev) => ({ ...prev, categoriesTouched: true }))
+            }
+            touched={touched.categoriesTouched}
+            error={categoriesError}
+            extraNote="Min length 3, lowercase letters and dashes only"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          text={'Create'}
+          className="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold  rounded-md transition cursor-pointer"
+        />
       </form>
     </div>
   )
