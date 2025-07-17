@@ -1,7 +1,15 @@
 'use client'
+
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
-import { createQuote } from '@/redux/slices/createQuoteSlice'
+import {
+  createQuote,
+  selectCreateError,
+  selectCreateStatus,
+} from '@/redux/slices/createQuoteSlice'
 import {
   clearQuoteForm,
   selectAuthor,
@@ -19,9 +27,8 @@ import {
   setCategoriesError,
   setTextError,
 } from '@/redux/slices/validationSlice'
-import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import Loading from '@/components/Loading'
+import AlertError from '@/components/AlertError'
 
 function CreatePage() {
   const dispatch = useDispatch()
@@ -32,6 +39,8 @@ function CreatePage() {
   const textError = useSelector(selectTextError)
   const authorError = useSelector(selectAuthorError)
   const categoriesError = useSelector(selectCategoriesError)
+  const status = useSelector(selectCreateStatus)
+  const error = useSelector(selectCreateError)
 
   const [touched, setTouched] = useState({
     textTouched: false,
@@ -59,29 +68,29 @@ function CreatePage() {
   const handleCreate = async (e) => {
     e.preventDefault()
 
-    const parsedCategories = categories
+    const parsedCategories = (typeof categories === 'string' ? categories : '')
       .split(',')
       .map((c) => c.trim())
-      .filter(Boolean)
-
+      .filter((c) => c.length >= 3)
+    
     const notValidText = validateText(text)
     const notValidAuthor = validateAuthor(author)
     const notValidCategories = validateCategories(parsedCategories)
 
     if (notValidText || notValidAuthor || notValidCategories) return
 
-    dispatch(
-      createQuote({ text: text, author: author, categories: parsedCategories })
-    )
     const resultAction = await dispatch(
       createQuote({ text, author, categories: parsedCategories })
     )
+
+    dispatch(clearQuoteForm())
 
     if (createQuote.fulfilled.match(resultAction)) {
       const newId = resultAction.payload.id
       router.push(`/quotes/${newId}`)
     }
   }
+
   const handleCategoriesChange = (val) => {
     dispatch(setCategories(val))
 
@@ -143,7 +152,6 @@ function CreatePage() {
             }
             touched={touched.categoriesTouched}
             error={categoriesError}
-            extraNote="Min length 3, lowercase letters and dashes only"
           />
         </div>
 
@@ -153,6 +161,10 @@ function CreatePage() {
           className="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold  rounded-md transition cursor-pointer"
         />
       </form>
+      {status === 'loading' && <Loading />}
+      {status === 'failed' && (
+        <AlertError title={'Error'} message={error} className={'mt-5'} />
+      )}
     </div>
   )
 }

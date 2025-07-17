@@ -17,7 +17,7 @@ const myQuoteSlice = createSlice({
   name: 'quote',
   initialState: {
     quote: null,
-    status: 'idle', 
+    status: 'idle',
     error: null,
   },
   reducers: {},
@@ -38,9 +38,8 @@ const myQuoteSlice = createSlice({
   },
 })
 
-
-export const selectCreatedQuote = (state) => state.quote.quote
-export const selectCreateStatus = (state) => state.quote.status
-export const selectCreateError = (state) => state.quote.error
+export const selectCreateStatus = (state) => state.createQuote?.status || 'idle'
+export const selectCreatedQuote = (state) => state.createQuote?.quote || null
+export const selectCreateError = (state) => state.createQuote?.error || null
 
 export default myQuoteSlice.reducer

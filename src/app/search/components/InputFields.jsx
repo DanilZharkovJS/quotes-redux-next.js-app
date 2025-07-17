@@ -131,14 +131,14 @@ export default function InputFields() {
       }}
       className="w-full flex flex-col"
     >
-      <div className="w-full md:w-[30%] mb-2">
+      <div className="w-full flex justify-center mb-4">
         <button
           type="button"
           onClick={handleClear}
-          className="flex items-center gap-1 text-gray-400 hover:text-red-500 transition"
+          className="flex items-center gap-1 text-gray-400 hover:text-red-500 active:text-red-500 transition"
         >
-          <RiDeleteBin2Line className="w-[24px] h-[24px]" />
-          <span className="font-medium mt-1">Clear</span>
+          <RiDeleteBin2Line className="w-[30px] h-[30px]" />
+          <span className="font-medium mt-1 text-lg">Clear</span>
         </button>
       </div>
 
