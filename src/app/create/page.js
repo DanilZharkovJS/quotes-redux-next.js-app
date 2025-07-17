@@ -7,9 +7,9 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import {
   createQuote,
-  selectCreateError,
-  selectCreateStatus,
-} from '@/redux/slices/createQuoteSlice'
+  selectSingleQuoteStatus,
+  selectSingleQuoteError,
+} from '@/redux/slices/singleQuoteSlice'
 import {
   clearQuoteForm,
   selectAuthor,
@@ -39,8 +39,8 @@ function CreatePage() {
   const textError = useSelector(selectTextError)
   const authorError = useSelector(selectAuthorError)
   const categoriesError = useSelector(selectCategoriesError)
-  const status = useSelector(selectCreateStatus)
-  const error = useSelector(selectCreateError)
+  const status = useSelector(selectSingleQuoteStatus)
+  const error = useSelector(selectSingleQuoteError)
 
   const [touched, setTouched] = useState({
     textTouched: false,
@@ -72,7 +72,7 @@ function CreatePage() {
       .split(',')
       .map((c) => c.trim())
       .filter((c) => c.length >= 3)
-    
+
     const notValidText = validateText(text)
     const notValidAuthor = validateAuthor(author)
     const notValidCategories = validateCategories(parsedCategories)

@@ -46,6 +46,10 @@ const searchSlice = createSlice({
       state.searchText = ''
       state.searchLimit = 10
     },
+    removeQuoteFromList: (state, action) => {
+        const idToRemove = Number(action.payload)
+      state.quotes = state.quotes.filter((q) => q.id !== idToRemove)
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -64,7 +68,7 @@ const searchSlice = createSlice({
   },
 })
 
-export const { setSearchAuthor, setSearchText, setSearchLimit, clearSearch } =
+export const { setSearchAuthor, setSearchText, setSearchLimit,clearSearch, removeQuoteFromList } =
   searchSlice.actions
 
 export { fetchQuotesByAuthorAndText }

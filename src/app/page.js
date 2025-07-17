@@ -21,12 +21,11 @@ export default function Home() {
 
       <Button
         onClick={() => dispatch(fetchQuotes())}
+        text={'Get 10 Random Quotes'}
         className={
-          'mb-8 px-6 py-3 bg-white text-black rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer'
+          'mb-8 px-6 py-3 bg-white text-black shadow-md hover:bg-gray-200 transition'
         }
-      >
-        Get 10 Random Quotes
-      </Button>
+      />
 
       <div className="w-full max-w-2xl space-y-6">
         {quotes.length ? (

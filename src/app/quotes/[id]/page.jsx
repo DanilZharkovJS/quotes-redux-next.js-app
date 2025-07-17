@@ -1,14 +1,37 @@
-import getSingleQuote from '@/hooks/getSingleQuote'
+'use client'
+import { use } from 'react'
+import {
+  getSingleQuote,
+  deleteQuote,
+  selectSingleQuoteStatus,
+  selectSingleQuote,
+} from '@/redux/slices/singleQuoteSlice'
+import Button from '@/components/Button'
 import Link from 'next/link'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { removeQuoteFromList } from '@/redux/slices/searchSlice'
 
-async function SinglePage({ params }) {
-  let quote = null
-  try {
-    quote = await getSingleQuote(params.id)
-  } catch {
-    quote = null
+function SinglePage({ params }) {
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const { id } = use(params)
+
+  const status = useSelector(selectSingleQuoteStatus)
+  const quote = useSelector(selectSingleQuote)
+
+  useEffect(() => {
+    dispatch(getSingleQuote(id))
+  }, [dispatch, id])
+
+  const handleDelete = () => {
+    dispatch(deleteQuote(id))
+    dispatch(removeQuoteFromList(id))
+    const lastPage = sessionStorage.getItem('lastVisitedPage')
+    router.push(lastPage)
   }
-  console.log('quote: ', quote)
+
   if (!quote) {
     return (
       <div className="text-gray-500 font-medium p-4 max-w-3xl mx-auto bg-gray-900 min-h-screen">
@@ -45,6 +68,8 @@ async function SinglePage({ params }) {
             ))}
           </div>
         )}
+        <div className="mt-3"></div>
+        <Button text={'Delete'} onClick={handleDelete} className="bg-red-500" />
       </div>
     </div>
   )

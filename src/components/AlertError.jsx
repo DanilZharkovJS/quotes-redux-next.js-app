@@ -3,7 +3,7 @@ import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import React from 'react'
 
-function AlertError({ title, message, className }) {
+function AlertError({ title = 'Error', message = 'Something went wrong', className }) {
   return (
     <div className={className}>
       <Alert variant="filled" severity="error" sx={ErrorMessageStyle}>
